@@ -1,10 +1,8 @@
-### AdaBelief opitmizer: Adapting stepsizes by the belief in observed gradients
+### AdaLA opitmizer: Adapting Gradient Estimates by Looking Ahead
 
-This repository contains code to reproduce results for submission 46 to NeurIPS 2020, "AdaBelief opitmizer: Adapting stepsizes by the belief in observed gradients".
+This repository contains code to reproduce results for the AdaLA optimizer.
 
-This repo heavily depends on the official implementation of AdaBound: https://github.com/Luolc/AdaBound
-The main difference is that we provide the code for different optimizers, including: AdaBlief, SGD, AdaBound, Yogi, Adam, MSVAG, RAdam, AdamW, Fromage.
-Code for optimizers in the literature are forked from public implementations, please see the comments in corresponding files in the folder "optimizers".
+This repo heavily depends on the official implementation of [AdaBelief](https://github.com/juntang-zhuang/Adabelief-Optimizer)
 
 
 
@@ -25,9 +23,9 @@ Please use the jupyter notebook "visualization.ipynb" to visualize the training 
 ### Training and evaluation code
 
 (1) train network with
-CUDA_VISIBLE_DEVICES=0 python main.py --optim adabelief --lr 1e-3 --eps 1e-8 --beta1 0.9 --beta2 0.999 --momentum 0.9
+CUDA_VISIBLE_DEVICES=0 python main.py --optim adala --lr 1e-3 --eps 1e-8 --beta1 0.9 --beta2 0.999 --momentum 0.9
 
---optim: name of optimizers, choices include ['sgd', 'adam', 'adamw', 'adabelief', 'yogi', 'msvag', 'radam', 'fromage', 'adabound',]
+--optim: name of optimizers, choices include ['sgd', 'adam', 'adamw', 'adabelief', 'yogi', 'msvag', 'radam', 'fromage', 'adabound', 'adala']
 --lr: learning rate
 --eps: epsilon value used for optimizers. Note that Yogi uses a default of 1e-03, other optimizers typically uses 1e-08
 --beta1, --beta2: beta values in adaptive optimizers
