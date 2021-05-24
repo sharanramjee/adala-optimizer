@@ -4,7 +4,7 @@ from torch.optim.optimizer import Optimizer
 
 version_higher = ( torch.__version__ >= "1.5.0" )
 
-class LookAhead(Optimizer):
+class AdaBelief(Optimizer):
     r"""Implements AdaBelief algorithm. Modified from Adam in PyTorch
 
     Arguments:
@@ -47,7 +47,7 @@ class LookAhead(Optimizer):
             raise ValueError("Invalid beta parameter at index 1: {}".format(betas[1]))
         defaults = dict(lr=lr, betas=betas, eps=eps,
                         weight_decay=weight_decay, amsgrad=amsgrad)
-        super(LookAhead, self).__init__(params, defaults)
+        super(AdaBelief, self).__init__(params, defaults)
 
         self.weight_decouple = weight_decouple
         self.rectify = rectify
@@ -61,7 +61,7 @@ class LookAhead(Optimizer):
         if amsgrad:
             print('AMS enabled in AdaBelief')
     def __setstate__(self, state):
-        super(LookAhead, self).__setstate__(state)
+        super(AdaBelief, self).__setstate__(state)
         for group in self.param_groups:
             group.setdefault('amsgrad', False)
 
@@ -84,18 +84,6 @@ class LookAhead(Optimizer):
                     # Maintains max of all exp. moving avg. of sq. grad. values
                     state['max_exp_avg_var'] = torch.zeros_like(p.data,
                                     memory_format=torch.preserve_format) if version_higher else torch.zeros_like(p.data)
-
-    def next_grads(self):
-        # for group in self.param_groups:
-        #     for p in group['params']:
-        #         if p.grad is None:
-        #             continue
-        #         grad = p.grad.data
-        #         if grad.is_sparse:
-        #             raise RuntimeError('AdaBelief does not support sparse gradients, please consider SparseAdam instead')
-        #         print('next_grad:', grad.shape)
-        return self.param_groups
-
 
     def step(self, closure=None):
         """Performs a single optimization step.
@@ -155,8 +143,6 @@ class LookAhead(Optimizer):
 
                 # Update first and second moment running average
                 exp_avg.mul_(beta1).add_(1 - beta1, grad)
-                # print('grad:', grad.shape)
-                # return
                 grad_residual = grad - exp_avg
                 exp_avg_var.mul_(beta2).addcmul_(1 - beta2, grad_residual, grad_residual)
 
